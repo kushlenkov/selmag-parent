@@ -1,6 +1,8 @@
 package kysh.corn.customer.controller;
 
 import kysh.corn.customer.client.ProductsClient;
+import kysh.corn.customer.entity.FavouriteProduct;
+import kysh.corn.customer.service.FavouriteProductsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +18,8 @@ public class ProductsController {
 
     private final ProductsClient productsClient;
 
+    private final FavouriteProductsService favouriteProductsService;
+
     @GetMapping("list")
     public Mono<String> getProductsListPage(Model model,
                                             @RequestParam(name = "filter", required = false) String filter) {
@@ -26,5 +30,21 @@ public class ProductsController {
                 .collectList()
                 .doOnNext(product -> model.addAttribute("products", product))
                 .thenReturn("customer/products/list");
+    }
+
+    @GetMapping("favourites")
+    public Mono<String> getFavouritesListPage(Model model,
+                                              @RequestParam(name = "filter", required = false) String filter) {
+
+        model.addAttribute("filter", filter);
+
+        return this.favouriteProductsService.findFavouriteProducts()
+                .map(FavouriteProduct::getProductId)
+                .collectList()
+                .flatMap(favouriteProducts -> this.productsClient.findAllProducts(filter)
+                        .filter(product -> favouriteProducts.contains(product.id()))
+                        .collectList()
+                        .doOnNext(product -> model.addAttribute("products", product)))
+                .thenReturn("customer/products/favourites");
     }
 }

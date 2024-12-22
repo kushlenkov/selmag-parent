@@ -3,6 +3,7 @@ package kysh.corn.customer.client;
 import kysh.corn.customer.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -14,7 +15,7 @@ public class WebClientProductsClient implements ProductsClient {
     @Override
     public Flux<Product> findAllProducts(String filter) {
         return this.webClient.get()
-                .uri("catalogue-api/products?filter={filter}", filter)
+                .uri("/catalogue-api/products?filter={filter}", filter)
                 .retrieve()
                 .bodyToFlux(Product.class);
     }
@@ -23,8 +24,9 @@ public class WebClientProductsClient implements ProductsClient {
     public Mono<Product> findProduct(int id) {
 
         return this.webClient.get()
-                .uri("catalogue-api/products/{productId}", id)
+                .uri("/catalogue-api/products/{productId}", id)
                 .retrieve()
-                .bodyToMono(Product.class);
+                .bodyToMono(Product.class)
+                .onErrorComplete(WebClientResponseException.NotFound.class);
     }
 }
