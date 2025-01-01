@@ -1,6 +1,6 @@
-package kysh.corn.customer.service;
+package kysh.corn.feedback.service;
 
-import kysh.corn.customer.entity.ProductReview;
+import kysh.corn.feedback.entity.ProductReview;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

@@ -1,6 +1,6 @@
-package kysh.corn.customer.repository;
+package kysh.corn.feedback.repository;
 
-import kysh.corn.customer.entity.ProductReview;
+import kysh.corn.feedback.entity.ProductReview;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

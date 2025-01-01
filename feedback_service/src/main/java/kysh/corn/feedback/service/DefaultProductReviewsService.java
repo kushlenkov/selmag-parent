@@ -1,7 +1,7 @@
-package kysh.corn.customer.service;
+package kysh.corn.feedback.service;
 
-import kysh.corn.customer.entity.ProductReview;
-import kysh.corn.customer.repository.ProductReviewsRepository;
+import kysh.corn.feedback.entity.ProductReview;
+import kysh.corn.feedback.repository.ProductReviewsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;

@@ -1,12 +1,12 @@
-package kysh.corn.manager;
+package kysh.corn;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ManagerApplication {
+public class FeedbackServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ManagerApplication.class, args);
+        SpringApplication.run(FeedbackServiceApplication.class, args);
     }
 }
