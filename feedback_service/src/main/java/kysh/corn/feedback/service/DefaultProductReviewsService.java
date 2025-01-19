@@ -1,7 +1,7 @@
 package kysh.corn.feedback.service;
 
 import kysh.corn.feedback.entity.ProductReview;
-import kysh.corn.feedback.repository.ProductReviewsRepository;
+import kysh.corn.feedback.repository.ProductReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -13,18 +13,18 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DefaultProductReviewsService implements ProductReviewsService {
 
-    private final ProductReviewsRepository productReviewsRepository;
+    private final ProductReviewRepository productReviewRepository;
 
     @Override
     public Mono<ProductReview> createProductReview(int productId, int rating, String review, String userId) {
 
-        return this.productReviewsRepository.save(
+        return this.productReviewRepository.save(
                 new ProductReview(UUID.randomUUID(), productId, rating, review, userId));
     }
 
     @Override
     public Flux<ProductReview> findProductReviewsByProduct(int productId) {
 
-        return this.productReviewsRepository.findAllByProductId(productId);
+        return this.productReviewRepository.findAllByProductId(productId);
     }
 }

@@ -36,21 +36,24 @@ public class ProductController {
     public Mono<Product> loadProduct(@PathVariable("productId") int id) {
 
         return this.productsClient.findProduct(id)
-                .switchIfEmpty(Mono.error(new NoSuchElementException("customer.products.error.not_found")));
+                .switchIfEmpty(Mono.defer(
+                        () -> Mono.error(new NoSuchElementException("customer.products.error.not_found"))
+                ));
     }
 
     @GetMapping
-    public Mono<String> getProductPage(@PathVariable("productId") int id,
-                                       Model model) {
+    public Mono<String> getProductPage(@ModelAttribute("product") Mono<Product> productMono, Model model) {
 
         model.addAttribute("inFavourite", false);
 
-        return this.productReviewsClient.findProductReviewsByProductId(id)
-                .collectList()
-                .doOnNext(productReviews -> model.addAttribute("reviews", productReviews))
-                .then(this.favouriteProductsClient.findFavouriteProductByProductId(id)
-                        .doOnNext(favouriteProduct -> model.addAttribute("inFavourite", true)))
-                .thenReturn("customer/products/product");
+        return productMono.flatMap(
+                product -> this.productReviewsClient.findProductReviewsByProductId(product.id())
+                        .collectList()
+                        .doOnNext(productReviews -> model.addAttribute("reviews", productReviews))
+                        .then(this.favouriteProductsClient.findFavouriteProductByProductId(product.id())
+                                .doOnNext(favouriteProduct -> model.addAttribute("inFavourite", true)))
+                        .thenReturn("customer/products/product")
+        );
     }
 
     @PostMapping("add-to-favourites")
@@ -78,26 +81,30 @@ public class ProductController {
     }
 
     @PostMapping("create-review")
-    public Mono<String> createReview(@PathVariable("productId") int id,
+    public Mono<String> createReview(@ModelAttribute("product") Mono<Product> productMono,
                                      NewProductReviewPayload payload,
-                                     Model model) {
+                                     Model model,
+                                     ServerHttpResponse response) {
 
-        return this.productReviewsClient.createProductReview(id, payload.rating(), payload.review())
-                .thenReturn("redirect:/customer/products/%d".formatted(id))
-                .onErrorResume(ClientBadRequestException.class, exception -> {
+        return productMono.flatMap(product ->
+                this.productReviewsClient.createProductReview(product.id(), payload.rating(), payload.review())
+                        .thenReturn("redirect:/customer/products/%d".formatted(product.id()))
+                        .onErrorResume(ClientBadRequestException.class, exception -> {
 
-                    model.addAttribute("inFavourite", false);
-                    model.addAttribute("payload", payload);
-                    model.addAttribute("errors", exception.getErrors());
+                            model.addAttribute("inFavourite", false);
+                            model.addAttribute("payload", payload);
+                            model.addAttribute("errors", exception.getErrors());
+                            response.setStatusCode(HttpStatus.BAD_REQUEST);
 
-                    return this.favouriteProductsClient.findFavouriteProductByProductId(id)
-                            .doOnNext(favouriteProduct -> model.addAttribute("inFavourite", true))
-                            .thenReturn("customer/products/product");
-                });
+                            return this.favouriteProductsClient.findFavouriteProductByProductId(product.id())
+                                    .doOnNext(favouriteProduct -> model.addAttribute("inFavourite", true))
+                                    .thenReturn("customer/products/product");
+                        }));
     }
 
     @ExceptionHandler(NoSuchElementException.class)
-    public String handleNoSuchElementException(NoSuchElementException exception, Model model, ServerHttpResponse response) {
+    public String handleNoSuchElementException(NoSuchElementException exception, Model model,
+                                               ServerHttpResponse response) {
 
         model.addAttribute("error", exception.getMessage());
         response.setStatusCode(HttpStatus.NOT_FOUND);

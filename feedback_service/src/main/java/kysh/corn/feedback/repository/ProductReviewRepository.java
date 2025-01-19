@@ -6,7 +6,7 @@ import reactor.core.publisher.Flux;
 
 import java.util.UUID;
 
-public interface ProductReviewsRepository extends ReactiveCrudRepository<ProductReview, UUID> {
+public interface ProductReviewRepository extends ReactiveCrudRepository<ProductReview, UUID> {
 
     Flux<ProductReview> findAllByProductId(int productId);
 }

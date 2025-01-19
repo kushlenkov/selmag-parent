@@ -22,7 +22,7 @@ public class ProductReviewsRestController {
     private final ProductReviewsService productReviewsService;
 
     @GetMapping("by-product-id/{productId:\\d+}")
-    public Flux<ProductReview> findProductReviewsByProduct(@PathVariable("productId") int productId) {
+    public Flux<ProductReview> findProductReviewsByProductId(@PathVariable("productId") int productId) {
 
         return this.productReviewsService.findProductReviewsByProduct(productId);
     }

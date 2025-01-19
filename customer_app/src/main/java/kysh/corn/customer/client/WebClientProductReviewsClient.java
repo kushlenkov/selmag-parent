@@ -38,8 +38,8 @@ public class WebClientProductReviewsClient implements ProductReviewsClient {
                 .bodyToMono(ProductReview.class)
                 // TODO
                 .onErrorMap(WebClientResponseException.BadRequest.class,
-                        exception -> new ClientBadRequestException(exception,
-                                ((List<String>)exception.getResponseBodyAs(ProblemDetail.class)
-                                        .getProperties().get("errors"))));
+                        exception -> new ClientBadRequestException("Возникла ошибка при добавлении товара в избранное",
+                                exception, ((List<String>) exception.getResponseBodyAs(ProblemDetail.class)
+                                .getProperties().get("errors"))));
     }
 }
