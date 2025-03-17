@@ -1,9 +1,9 @@
 selmag:
   services:
     catalogue:
-      uri: http://localhost:8081
+      uri: lb://selmag-catalogue-service
     feedback:
-      uri: http://localhost:8084
+      uri: lb://selmag-feedback-service
 server:
   port: 8083
 spring:
@@ -58,5 +58,8 @@ management:
     sampling:
       probability: 1.0
 eureka:
+  instance:
+    prefer-ip-address: true
   client:
-    enabled: false
+    service-url:
+      defaultZone: http://localhost:8761/eureka/

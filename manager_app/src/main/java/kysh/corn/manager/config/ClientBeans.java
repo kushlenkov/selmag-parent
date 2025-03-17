@@ -6,6 +6,8 @@ import kysh.corn.manager.client.RestClientProductsRestClient;
 import kysh.corn.manager.security.OAuthClientHttpRequestInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -27,10 +29,12 @@ public class ClientBeans {
             @Value("${selmag.services.catalogue.uri:http://localhost:8081}") String catalogueBaseUri,
             ClientRegistrationRepository clientRegistrationRepository,
             OAuth2AuthorizedClientRepository authorizedClientRepository,
-            @Value("${selmag.services.catalogue.registration-id:keycloak}") String registrationId) {
+            @Value("${selmag.services.catalogue.registration-id:keycloak}") String registrationId,
+            LoadBalancerClient loadBalancerClient) {
 
         return new RestClientProductsRestClient(RestClient.builder()
                 .baseUrl(catalogueBaseUri)
+                .requestInterceptor(new LoadBalancerInterceptor(loadBalancerClient))
                 .requestInterceptor(
                         new OAuthClientHttpRequestInterceptor(
                                 new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository,
