@@ -8,7 +8,7 @@ spring:
       client:
         url: http://localhost:8085
         instance:
-          name: feedback-service
+          name: catalogue-service
           service-host-type: ip
         enabled: true
   datasource:

@@ -1,42 +1,49 @@
-server:
-  port: 8084
+selmag:
+  services:
+    catalogue:
+      uri: lb://selmag-catalogue-service
+      registration-id: keycloak
 spring:
   application:
-    name: selmag-feedback-service
+    name: selmag-manager-app
   boot:
     admin:
       client:
         url: http://localhost:8085
         instance:
-          name: feedback-service
+          name: manager-app
           service-host-type: ip
         enabled: true
-  data:
-    mongodb:
-      uri: mongodb://192.168.0.120:27017/feedback
+  datasource:
+    url: jdbc:postgresql://192.168.0.120:5433/manager
+    username: manager
+    password: manager
   security:
     oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://192.168.0.120:8082/realms/selmag
       client:
         provider:
           keycloak:
             issuer-uri: http://192.168.0.120:8082/realms/selmag
+            user-name-attribute: preferred_username
         registration:
           keycloak:
+            client-id: manager-app
+            client-secret: kdLQQRZ5NDBgjdPo9AwztDbk8j6NQvfA
+            scope:
+              - openid
+              - view_catalogue
+              - edit_catalogue
+              - microprofile-jwt
+          metrics:
+            provider: keycloak
+            client-id: manager-app-metrics-client
+            client-secret: 9YzU4GGzHK1Wnq3LwWP9dDf02YAfZLOz
             authorization-grant-type: client_credentials
             scope:
               - metrics_server
-            client-id: feedback-service-metrics-client
-            client-secret: j6jbxx4cp2dJAHorFJrLkz82azh3YQTv
-springdoc:
-  swagger-ui:
-    oauth:
-      client-id: feedback-service-swagger-ui
-      use-pkce-with-authorization-code-grant: true
-keycloak:
-  uri: http://192.168.0.120:8082
+      resourceserver:
+        jwt:
+          issuer-uri: http://192.168.0.120:8082/realms/selmag
 management:
   health:
     livenessstate:
