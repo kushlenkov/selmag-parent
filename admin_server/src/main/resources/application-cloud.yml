@@ -24,6 +24,13 @@ spring:
               - openid
             client-id: admin-service
             client-secret: AniOsr2LTXVVb9oSZRF1JT23tyAPC1Z0
+          discovery:
+            provider: keycloak
+            client-id: admin-service
+            client-secret: AniOsr2LTXVVb9oSZRF1JT23tyAPC1Z0
+            authorization-grant-type: client_credentials
+            scope:
+              - discovery
   # Увеличиваем interval, lifetime и timeout для проверки статуса
   # для корректной работы монитора в Spring Boot Admin
   # из-за проблем с mongo db в сервисе feedback
@@ -42,4 +49,8 @@ management:
           - prometheus
 eureka:
   client:
-    enabled: false
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: false
+  instance:
+    prefer-ip-address: true

@@ -9,11 +9,7 @@ spring:
   boot:
     admin:
       client:
-        url: http://localhost:8085
-        instance:
-          name: manager-app
-          service-host-type: ip
-        enabled: true
+        enabled: false
   datasource:
     url: jdbc:postgresql://192.168.0.120:5433/manager
     username: manager
@@ -36,11 +32,18 @@ spring:
               - microprofile-jwt
           metrics:
             provider: keycloak
-            client-id: manager-app-metrics-client
-            client-secret: 9YzU4GGzHK1Wnq3LwWP9dDf02YAfZLOz
+            client-id: manager-app
+            client-secret: kdLQQRZ5NDBgjdPo9AwztDbk8j6NQvfA
             authorization-grant-type: client_credentials
             scope:
               - metrics_server
+          discovery:
+            provider: keycloak
+            client-id: manager-app
+            client-secret: kdLQQRZ5NDBgjdPo9AwztDbk8j6NQvfA
+            authorization-grant-type: client_credentials
+            scope:
+              - discovery
       resourceserver:
         jwt:
           issuer-uri: http://192.168.0.120:8082/realms/selmag

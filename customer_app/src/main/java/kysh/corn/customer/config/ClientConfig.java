@@ -1,13 +1,14 @@
 package kysh.corn.customer.config;
 
+import de.codecentric.boot.admin.client.config.ClientProperties;
+import de.codecentric.boot.admin.client.registration.ReactiveRegistrationClient;
+import de.codecentric.boot.admin.client.registration.RegistrationClient;
 import io.micrometer.observation.ObservationRegistry;
 import kysh.corn.customer.client.WebClientFavouriteProductsClient;
 import kysh.corn.customer.client.WebClientProductReviewsClient;
 import kysh.corn.customer.client.WebClientProductsClient;
-import de.codecentric.boot.admin.client.config.ClientProperties;
-import de.codecentric.boot.admin.client.registration.ReactiveRegistrationClient;
-import de.codecentric.boot.admin.client.registration.RegistrationClient;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,24 +24,49 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Configuration
 public class ClientConfig {
 
-    @Bean
-    @LoadBalanced
-    @Scope("prototype")
-    public WebClient.Builder selmagServicesWebClientBuilder(
-            ReactiveClientRegistrationRepository clientRegistrationRepository,
-            ServerOAuth2AuthorizedClientRepository authorizedClientRepository,
-            ObservationRegistry observationRegistry
-    ) {
-        ServerOAuth2AuthorizedClientExchangeFilterFunction filter =
-                new ServerOAuth2AuthorizedClientExchangeFilterFunction(clientRegistrationRepository,
-                        authorizedClientRepository);
+    @Configuration
+    @ConditionalOnProperty(name = "eureka.client.enabled", havingValue = "false")
+    public static class StandaloneClientConfig {
 
-        filter.setDefaultClientRegistrationId("keycloak");
+        @Bean
+        @Scope("prototype")
+        public WebClient.Builder selmagServicesWebClientBuilder(
+                ReactiveClientRegistrationRepository clientRegistrationRepository,
+                ServerOAuth2AuthorizedClientRepository authorizedClientRepository,
+                ObservationRegistry observationRegistry
+        ) {
+            ServerOAuth2AuthorizedClientExchangeFilterFunction filter =
+                    new ServerOAuth2AuthorizedClientExchangeFilterFunction(clientRegistrationRepository,
+                            authorizedClientRepository);
+            filter.setDefaultClientRegistrationId("keycloak");
+            return WebClient.builder()
+                    .observationRegistry(observationRegistry)
+                    .observationConvention(new DefaultClientRequestObservationConvention())
+                    .filter(filter);
+        }
+    }
 
-        return WebClient.builder()
-                .observationRegistry(observationRegistry)
-                .observationConvention(new DefaultClientRequestObservationConvention())
-                .filter(filter);
+    @Configuration
+    @ConditionalOnProperty(name = "eureka.client.enabled", havingValue = "true", matchIfMissing = true)
+    public static class CloudClientConfig {
+
+        @Bean
+        @LoadBalanced
+        @Scope("prototype")
+        public WebClient.Builder selmagServicesWebClientBuilder(
+                ReactiveClientRegistrationRepository clientRegistrationRepository,
+                ServerOAuth2AuthorizedClientRepository authorizedClientRepository,
+                ObservationRegistry observationRegistry
+        ) {
+            ServerOAuth2AuthorizedClientExchangeFilterFunction filter =
+                    new ServerOAuth2AuthorizedClientExchangeFilterFunction(clientRegistrationRepository,
+                            authorizedClientRepository);
+            filter.setDefaultClientRegistrationId("keycloak");
+            return WebClient.builder()
+                    .observationRegistry(observationRegistry)
+                    .observationConvention(new DefaultClientRequestObservationConvention())
+                    .filter(filter);
+        }
     }
 
     @Bean
@@ -48,7 +74,6 @@ public class ClientConfig {
             @Value("${selmag.services.catalogue.uri:http://localhost:8081}") String catalogueBaseUrl,
             WebClient.Builder selmagServicesWebClientBuilder
     ) {
-
         return new WebClientProductsClient(selmagServicesWebClientBuilder
                 .baseUrl(catalogueBaseUrl)
                 .build());
@@ -59,7 +84,6 @@ public class ClientConfig {
             @Value("${selmag.services.feedback.uri:http://localhost:8084}") String feedbackBaseUrl,
             WebClient.Builder selmagServicesWebClientBuilder
     ) {
-
         return new WebClientFavouriteProductsClient(selmagServicesWebClientBuilder
                 .baseUrl(feedbackBaseUrl)
                 .build());
@@ -70,13 +94,13 @@ public class ClientConfig {
             @Value("${selmag.services.feedback.uri:http://localhost:8084}") String feedbackBaseUrl,
             WebClient.Builder selmagServicesWebClientBuilder
     ) {
-
         return new WebClientProductReviewsClient(selmagServicesWebClientBuilder
                 .baseUrl(feedbackBaseUrl)
                 .build());
     }
 
     @Bean
+    @ConditionalOnProperty(name = "spring.boot.admin.client.enabled", havingValue = "true")
     public RegistrationClient registrationClient(
             ClientProperties clientProperties,
             ReactiveClientRegistrationRepository clientRegistrationRepository,

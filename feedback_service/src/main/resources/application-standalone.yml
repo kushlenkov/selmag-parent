@@ -26,10 +26,17 @@ spring:
         registration:
           keycloak:
             authorization-grant-type: client_credentials
+            client-id: feedback-service
+            client-secret: j6jbxx4cp2dJAHorFJrLkz82azh3YQTv
             scope:
               - metrics_server
-            client-id: feedback-service-metrics-client
+          discovery:
+            provider: keycloak
+            authorization-grant-type: client_credentials
+            client-id: feedback-service
             client-secret: j6jbxx4cp2dJAHorFJrLkz82azh3YQTv
+            scope:
+              - discovery
 springdoc:
   swagger-ui:
     oauth:
@@ -55,7 +62,4 @@ management:
       probability: 1.0
 eureka:
   client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-  instance:
-    prefer-ip-address: true
+    enabled: false

@@ -5,6 +5,7 @@ import de.codecentric.boot.admin.client.registration.RegistrationClient;
 import kysh.corn.manager.client.RestClientProductsRestClient;
 import kysh.corn.manager.security.OAuthClientHttpRequestInterceptor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerInterceptor;
@@ -24,25 +25,51 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class ClientBeans {
 
-    @Bean
-    public RestClientProductsRestClient productsRestClient(
-            @Value("${selmag.services.catalogue.uri:http://localhost:8081}") String catalogueBaseUri,
-            ClientRegistrationRepository clientRegistrationRepository,
-            OAuth2AuthorizedClientRepository authorizedClientRepository,
-            @Value("${selmag.services.catalogue.registration-id:keycloak}") String registrationId,
-            LoadBalancerClient loadBalancerClient) {
+    @Configuration
+    @ConditionalOnProperty(name = "eureka.client.enabled", havingValue = "false")
+    public static class StandaloneClientConfig {
 
-        return new RestClientProductsRestClient(RestClient.builder()
-                .baseUrl(catalogueBaseUri)
-                .requestInterceptor(new LoadBalancerInterceptor(loadBalancerClient))
-                .requestInterceptor(
-                        new OAuthClientHttpRequestInterceptor(
-                                new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository,
-                                        authorizedClientRepository), registrationId))
-                .build());
+        @Bean
+        public RestClientProductsRestClient productsRestClient(
+                @Value("${selmag.services.catalogue.uri:http://localhost:8081}") String catalogueBaseUri,
+                ClientRegistrationRepository clientRegistrationRepository,
+                OAuth2AuthorizedClientRepository authorizedClientRepository,
+                @Value("${selmag.services.catalogue.registration-id:keycloak}") String registrationId) {
+            return new RestClientProductsRestClient(RestClient.builder()
+                    .baseUrl(catalogueBaseUri)
+                    .requestInterceptor(
+                            new OAuthClientHttpRequestInterceptor(
+                                    new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository,
+                                            authorizedClientRepository), registrationId))
+                    .build());
+        }
+    }
+
+
+    @Configuration
+    @ConditionalOnProperty(name = "eureka.client.enabled", havingValue = "true", matchIfMissing = true)
+    public static class CloudClientConfig {
+
+        @Bean
+        public RestClientProductsRestClient productsRestClient(
+                @Value("${selmag.services.catalogue.uri:http://localhost:8081}") String catalogueBaseUri,
+                ClientRegistrationRepository clientRegistrationRepository,
+                OAuth2AuthorizedClientRepository authorizedClientRepository,
+                @Value("${selmag.services.catalogue.registration-id:keycloak}") String registrationId,
+                LoadBalancerClient loadBalancerClient) {
+            return new RestClientProductsRestClient(RestClient.builder()
+                    .baseUrl(catalogueBaseUri)
+                    .requestInterceptor(new LoadBalancerInterceptor(loadBalancerClient))
+                    .requestInterceptor(
+                            new OAuthClientHttpRequestInterceptor(
+                                    new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository,
+                                            authorizedClientRepository), registrationId))
+                    .build());
+        }
     }
 
     @Bean
+    @ConditionalOnProperty(name = "spring.boot.admin.client.enabled", havingValue = "true")
     public RegistrationClient registrationClient(
             ClientRegistrationRepository clientRegistrationRepository,
             OAuth2AuthorizedClientService authorizedClientService
@@ -50,6 +77,7 @@ public class ClientBeans {
         AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientManager =
                 new AuthorizedClientServiceOAuth2AuthorizedClientManager(clientRegistrationRepository,
                         authorizedClientService);
+
         RestTemplate restTemplate = new RestTemplateBuilder()
                 .interceptors((request, body, execution) -> {
                     if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
@@ -57,8 +85,10 @@ public class ClientBeans {
                                 .withClientRegistrationId("metrics")
                                 .principal("manager-app-metrics-client")
                                 .build());
+
                         request.getHeaders().setBearerAuth(authorizedClient.getAccessToken().getTokenValue());
                     }
+
                     return execution.execute(request, body);
                 })
                 .build();

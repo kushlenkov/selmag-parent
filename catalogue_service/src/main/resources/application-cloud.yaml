@@ -6,11 +6,7 @@ spring:
   boot:
     admin:
       client:
-        url: http://localhost:8085
-        instance:
-          name: catalogue-service
-          service-host-type: ip
-        enabled: true
+        enabled: false
   datasource:
     url: jdbc:postgresql://192.168.0.120:5432/catalogue
     username: postgres
@@ -33,10 +29,17 @@ spring:
         registration:
           keycloak:
             authorization-grant-type: client_credentials
+            client-id: catalogue-service
+            client-secret: gRNcmy7B5hFmpbO2xcbCWT1WGLUQMN86
             scope:
               - metrics_server
-            client-id: catalogue-service-metrics-client
+          discovery:
+            provider: keycloak
+            authorization-grant-type: client_credentials
+            client-id: catalogue-service
             client-secret: gRNcmy7B5hFmpbO2xcbCWT1WGLUQMN86
+            scope:
+              - discovery
 logging:
   level:
     sql: info
