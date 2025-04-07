@@ -1,0 +1,10 @@
+server:
+  port: 8888
+spring:
+  application:
+    name: selmag_config_server
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: file:./config/cloud/{application}/{profile}

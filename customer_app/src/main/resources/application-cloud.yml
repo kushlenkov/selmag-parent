@@ -13,6 +13,9 @@ spring:
     admin:
       client:
         enabled: false
+  cloud:
+    config:
+      enabled: false
   security:
     oauth2:
       client:
@@ -24,6 +27,7 @@ spring:
           keycloak:
             client-id: customer-app
             client-secret: oFwH54m13hwXZmVj6I0itYcuOy2fFeVU
+            authorization-grant-type: authorization_code
             scope:
               - openid
               - view_catalogue

@@ -7,6 +7,9 @@ spring:
     admin:
       client:
         enabled: false
+  cloud:
+    config:
+      enabled: false
   datasource:
     url: jdbc:postgresql://192.168.0.120:5432/catalogue
     username: postgres

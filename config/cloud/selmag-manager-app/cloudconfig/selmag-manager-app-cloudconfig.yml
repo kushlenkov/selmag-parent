@@ -1,25 +1,17 @@
 selmag:
   services:
     catalogue:
-      uri: http://localhost:8081
-    feedback:
-      uri: http://localhost:8084
-server:
-  port: 8083
+      uri: lb://selmag-catalogue-service
+      registration-id: keycloak
 spring:
-  application:
-    name: selmag-customer-app
   boot:
     admin:
       client:
-        url: http://localhost:8085
-        instance:
-          name: customer-app
-          service-host-type: ip
-        enabled: true
-  cloud:
-    config:
-      enabled: false
+        enabled: false
+  datasource:
+    url: jdbc:postgresql://192.168.0.120:5433/manager
+    username: manager
+    password: manager
   security:
     oauth2:
       client:
@@ -29,19 +21,27 @@ spring:
             user-name-attribute: preferred_username
         registration:
           keycloak:
-            client-id: customer-app
-            client-secret: oFwH54m13hwXZmVj6I0itYcuOy2fFeVU
-            authorization-grant-type: authorization_code
+            client-id: manager-app
+            client-secret: kdLQQRZ5NDBgjdPo9AwztDbk8j6NQvfA
             scope:
               - openid
               - view_catalogue
+              - edit_catalogue
+              - microprofile-jwt
           metrics:
             provider: keycloak
-            client-id: customer-app
-            client-secret: oFwH54m13hwXZmVj6I0itYcuOy2fFeVU
+            client-id: manager-app
+            client-secret: kdLQQRZ5NDBgjdPo9AwztDbk8j6NQvfA
             authorization-grant-type: client_credentials
             scope:
               - metrics_server
+          discovery:
+            provider: keycloak
+            client-id: manager-app
+            client-secret: kdLQQRZ5NDBgjdPo9AwztDbk8j6NQvfA
+            authorization-grant-type: client_credentials
+            scope:
+              - discovery
       resourceserver:
         jwt:
           issuer-uri: http://192.168.0.120:8082/realms/selmag
@@ -63,4 +63,7 @@ management:
       probability: 1.0
 eureka:
   client:
-    enabled: false
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true

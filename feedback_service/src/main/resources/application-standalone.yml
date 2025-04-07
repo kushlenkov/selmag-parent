@@ -11,6 +11,9 @@ spring:
           name: feedback-service
           service-host-type: ip
         enabled: true
+  cloud:
+    config:
+      enabled: false
   data:
     mongodb:
       uri: mongodb://192.168.0.120:27017/feedback
