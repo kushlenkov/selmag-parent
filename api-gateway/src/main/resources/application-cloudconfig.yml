@@ -1,9 +1,9 @@
 server:
-  port: 8081
-  forward-headers-strategy: native
+  port: 8086
+  forward-headers-strategy: framework
 spring:
   application:
-    name: selmag-catalogue-service
+    name: selmag-api-gateway
   config:
     import: 'optional:configserver:'
   cloud:

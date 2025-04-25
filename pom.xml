@@ -17,6 +17,7 @@
         <module>admin_server</module>
         <module>eureka_server</module>
         <module>config_server</module>
+        <module>api-gateway</module>
     </modules>
 
     <properties>
@@ -97,7 +98,7 @@
                     <dependency>
                         <groupId>org.springframework.restdocs</groupId>
                         <artifactId>spring-restdocs-asciidoctor</artifactId>
-                        <version>3.0.1</version>
+                        <version>3.0.3</version>
                     </dependency>
                 </dependencies>
             </plugin>
