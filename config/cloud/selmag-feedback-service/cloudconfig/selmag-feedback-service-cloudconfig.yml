@@ -5,37 +5,37 @@ spring:
         enabled: false
   data:
     mongodb:
-      uri: mongodb://192.168.0.120:27017/feedback
+      uri: mongodb://172.27.0.1:27017/feedback
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://192.168.0.120:8082/realms/selmag
+          issuer-uri: http://172.27.0.1:8082/realms/selmag
       client:
-        provider:
-          keycloak:
-            issuer-uri: http://192.168.0.120:8082/realms/selmag
         registration:
           keycloak:
-            authorization-grant-type: client_credentials
             client-id: feedback-service
-            client-secret: j6jbxx4cp2dJAHorFJrLkz82azh3YQTv
+            client-secret: 4cD79sTpV318BqiIWWUYsfjywdzg4DeK
+            authorization-grant-type: client_credentials
             scope:
               - metrics_server
           discovery:
             provider: keycloak
-            authorization-grant-type: client_credentials
             client-id: feedback-service
-            client-secret: j6jbxx4cp2dJAHorFJrLkz82azh3YQTv
+            client-secret: 4cD79sTpV318BqiIWWUYsfjywdzg4DeK
+            authorization-grant-type: client_credentials
             scope:
               - discovery
+        provider:
+          keycloak:
+            issuer-uri: http://172.27.0.1:8082/realms/selmag
 springdoc:
   swagger-ui:
     oauth:
       client-id: feedback-service-swagger-ui
       use-pkce-with-authorization-code-grant: true
 keycloak:
-  uri: http://192.168.0.120:8082
+  uri: http://172.27.0.1:8082
 management:
   health:
     livenessstate:
@@ -48,16 +48,16 @@ management:
         include: '*'
   zipkin:
     tracing:
-      endpoint: http://192.168.0.120:9411/api/v2/spans
+      endpoint: http://172.27.0.1:9411/api/v2/spans
   tracing:
     sampling:
       probability: 1.0
 eureka:
-  instance:
-    leaseRenewalIntervalInSeconds: 1
-    leaseExpirationDurationInSeconds: 1
-    hostname: 192.168.0.108
   client:
     registryFetchIntervalSeconds: 1
     service-url:
-      defaultZone: http://192.168.0.108:8761/eureka/
+      defaultZone: http://172.27.0.1:8761/eureka/
+  instance:
+    leaseRenewalIntervalInSeconds: 1
+    leaseExpirationDurationInSeconds: 1
+    prefer-ip-address: true

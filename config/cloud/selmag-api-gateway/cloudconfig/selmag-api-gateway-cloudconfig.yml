@@ -2,37 +2,37 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: catalog-service-route
+        - id: catalogue-service-route
           uri: lb://selmag-catalogue-service
           predicates:
-            - Host=catalogue.api.kush.corn.192.168.0.108.nip.io
+            - Host=catalogue.api.selm.ag.172.27.0.1.nip.io
         - id: feedback-service-route
           uri: lb://selmag-feedback-service
           predicates:
-            - Host=feedback.api.kush.corn.192.168.0.108.nip.io
+            - Host=feedback.api.selm.ag.172.27.0.1.nip.io
         - id: manager-app-route
           uri: lb://selmag-manager-app
           predicates:
-            - Host=manager.selm.ag.192.168.0.108.nip.io
+            - Host=manager.selm.ag.172.27.0.1.nip.io
         - id: customer-app-route
           uri: lb://selmag-customer-app
           predicates:
-            - Host=customer.selm.ag.192.168.0.108.nip.io
+            - Host=customer.selm.ag.172.27.0.1.nip.io
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://192.168.0.120:8082/realms/selmag
+          issuer-uri: http://172.27.0.1:8082/realms/selmag
       client:
         provider:
           keycloak:
-            issuer-uri: http://192.168.0.120:8082/realms/selmag
+            issuer-uri: http://172.27.0.1:8082/realms/selmag
         registration:
           discovery:
             provider: keycloak
-            authorization-grant-type: client_credentials
             client-id: api-gateway
-            client-secret: RJOuO8i9Ay2Xg7S5634bq8FUkZVdx3w5
+            client-secret: kaKBJ6Pc9mPldygbbI5SgWkZWo1ewk5y
+            authorization-grant-type: client_credentials
             scope:
               - discovery
   application:
@@ -53,7 +53,7 @@ management:
         include: '*'
   zipkin:
     tracing:
-      endpoint: http://192.168.0.120:9411/api/v2/spans
+      endpoint: http://172.27.0.1:9411/api/v2/spans
   tracing:
     sampling:
       probability: 1.0
@@ -61,8 +61,8 @@ eureka:
   instance:
     leaseRenewalIntervalInSeconds: 1
     leaseExpirationDurationInSeconds: 1
-    hostname: 192.168.0.108
+    prefer-ip-address: true
   client:
     service-url:
-      defaultZone: http://192.168.0.108:8761/eureka/
+      defaultZone: http://172.27.0.1:8761/eureka/
     registryFetchIntervalSeconds: 1

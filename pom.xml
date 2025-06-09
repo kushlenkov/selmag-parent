@@ -2,21 +2,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                             http://maven.apache.org/maven-v4_0_0.xsd">
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>kysh.corn</groupId>
-    <artifactId>selmag_parent</artifactId>
-    <version>1.0</version>
+    <artifactId>selmag-parent</artifactId>
+    <version>24.1.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>manager_app</module>
-        <module>catalogue_service</module>
-        <module>customer_app</module>
-        <module>feedback_service</module>
-        <module>admin_server</module>
-        <module>eureka_server</module>
-        <module>config_server</module>
+        <module>manager-app</module>
+        <module>catalogue-service</module>
+        <module>customer-app</module>
+        <module>feedback-service</module>
+        <module>admin-server</module>
+        <module>eureka-server</module>
+        <module>config-server</module>
         <module>api-gateway</module>
     </modules>
 
@@ -24,7 +24,7 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring-boot.version>3.2.2</spring-boot.version>
+        <spring-boot.version>3.2.3</spring-boot.version>
         <spring-cloud.version>2023.0.0</spring-cloud.version>
     </properties>
 
@@ -98,7 +98,7 @@
                     <dependency>
                         <groupId>org.springframework.restdocs</groupId>
                         <artifactId>spring-restdocs-asciidoctor</artifactId>
-                        <version>3.0.3</version>
+                        <version>3.0.1</version>
                     </dependency>
                 </dependencies>
             </plugin>

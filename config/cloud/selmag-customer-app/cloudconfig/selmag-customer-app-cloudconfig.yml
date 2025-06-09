@@ -14,34 +14,34 @@ spring:
       client:
         provider:
           keycloak:
-            issuer-uri: http://192.168.0.120:8082/realms/selmag
+            issuer-uri: http://172.27.0.1:8082/realms/selmag
             user-name-attribute: preferred_username
         registration:
           keycloak:
             client-id: customer-app
-            client-secret: oFwH54m13hwXZmVj6I0itYcuOy2fFeVU
+            client-secret: M1bhGCByxWDqVWeokJj6Z9sMGTI41lNc
             client-name: Selmag Keycloak
             authorization-grant-type: authorization_code
             scope:
               - openid
               - view_catalogue
-          discovery:
-            provider: keycloak
-            client-id: customer-app
-            client-secret: oFwH54m13hwXZmVj6I0itYcuOy2fFeVU
-            authorization-grant-type: client_credentials
-            scope:
-              - discovery
           metrics:
             provider: keycloak
             client-id: customer-app
-            client-secret: oFwH54m13hwXZmVj6I0itYcuOy2fFeVU
+            client-secret: M1bhGCByxWDqVWeokJj6Z9sMGTI41lNc
             authorization-grant-type: client_credentials
             scope:
               - metrics_server
+          discovery:
+            provider: keycloak
+            client-id: customer-app
+            client-secret: M1bhGCByxWDqVWeokJj6Z9sMGTI41lNc
+            authorization-grant-type: client_credentials
+            scope:
+              - discovery
       resourceserver:
         jwt:
-          issuer-uri: http://192.168.0.120:8082/realms/selmag
+          issuer-uri: http://172.27.0.1:8082/realms/selmag
 management:
   health:
     livenessstate:
@@ -54,7 +54,7 @@ management:
         include: '*'
   zipkin:
     tracing:
-      endpoint: http://192.168.0.120:9411/api/v2/spans
+      endpoint: http://172.27.0.1:9411/api/v2/spans
   tracing:
     sampling:
       probability: 1.0
@@ -62,8 +62,8 @@ eureka:
   instance:
     leaseRenewalIntervalInSeconds: 1
     leaseExpirationDurationInSeconds: 1
-    hostname: 192.168.0.108
+    prefer-ip-address: true
   client:
     registryFetchIntervalSeconds: 1
     service-url:
-      defaultZone: http://192.168.0.108:8761/eureka/
+      defaultZone: http://172.27.0.1:8761/eureka/

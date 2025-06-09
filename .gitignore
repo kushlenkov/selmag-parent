@@ -36,7 +36,3 @@ build/
 
 ### Mac OS ###
 .DS_Store
-/amplicode.xml
-/.idea/amplicode-jpa.xml
-/.idea/amplicode-settings.xml
-/.idea/

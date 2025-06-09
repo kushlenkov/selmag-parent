@@ -3,36 +3,36 @@ spring:
     gateway:
       routes:
         - id: catalogue-service-route
-          uri: http://192.168.0.108:8081
+          uri: http://172.27.0.1:8081
           predicates:
-            - Host=catalogue.api.selm.ag.192.168.0.108.nip.io
+            - Host=catalogue.api.selm.ag.172.27.0.1.nip.io
         - id: feedback-service-route
-          uri: http://192.168.0.108:8084
+          uri: http://172.27.0.1:8084
           predicates:
-            - Host=feedback.api.selm.ag.192.168.0.108.nip.io
+            - Host=feedback.api.selm.ag.172.27.0.1.nip.io
     config:
       enabled: false
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://192.168.0.120:8082/realms/selmag
+          issuer-uri: http://172.27.0.1:8082/realms/selmag
       client:
         provider:
           keycloak:
-            issuer-uri: http://192.168.0.120:8082/realms/selmag
+            issuer-uri: http://172.27.0.1:8082/realms/selmag
         registration:
           discovery:
             provider: keycloak
             client-id: api-gateway
-            client-secret: RJOuO8i9Ay2Xg7S5634bq8FUkZVdx3w5
+            client-secret: kaKBJ6Pc9mPldygbbI5SgWkZWo1ewk5y
             authorization-grant-type: client_credentials
             scope:
               - discovery
           metrics:
             provider: keycloak
             client-id: api-gateway
-            client-secret: RJOuO8i9Ay2Xg7S5634bq8FUkZVdx3w5
+            client-secret: kaKBJ6Pc9mPldygbbI5SgWkZWo1ewk5y
             authorization-grant-type: client_credentials
             scope:
               - metrics_server
@@ -41,32 +41,32 @@ spring:
   boot:
     admin:
       client:
-        url: http://192.168.0.108:8085
+        url: http://172.27.0.1:8085
         instance:
           name: api-gateway
           service-host-type: ip
-          service-base-url: http://192.168.0.108:8086
-          management-base-url: http://192.168.0.108:8086
+          service-base-url: http://172.27.0.1:8086
+          management-base-url: http://172.27.0.1:8086
         enabled: true
-  management:
-    health:
-      livenessstate:
-        enabled: true
-      readinessstate:
-        enabled: true
-    endpoints:
-      web:
-        exposure:
-          include: '*'
-    zipkin:
-      tracing:
-        endpoint: http://192.168.0.120:9411/api/v2/spans
+management:
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  zipkin:
     tracing:
-      sampling:
-        probability: 1.0
-  server:
-    port: 8086
-    forward-headers-strategy: framework
-  eureka:
-    client:
-      enabled: false
+      endpoint: http://172.27.0.1:9411/api/v2/spans
+  tracing:
+    sampling:
+      probability: 1.0
+server:
+  port: 8086
+  forward-headers-strategy: framework
+eureka:
+  client:
+    enabled: false

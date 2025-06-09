@@ -1,0 +1,11 @@
+server:
+  port: 8888
+spring:
+  application:
+    name: selmag-config-server
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: file:./config/cloud/{application}/{profile}
+          name: '{application}-{profile}.yml,{application}-{profile}.yaml,{application}-{profile}.properties,{application}-{profile}.json,{application}.yml,{application}.yaml,{application}.properties,{application}.json,{application}-{profile}-{label}.yml,{application}-{profile}-{label}.yaml,{application}-{profile}-{label}.properties,{application}-{profile}-{label}.json,{application}-{label}.yml,{application}-{label}.yaml,{application}-{label}.properties,{application}-{label}.json,{application}-{profile}-{name}.yml,{application}-{profile}-{name}.yaml,{application}-{profile}-{name}.properties,{application}-{profile}-{name}.json,{application}-{name}.yml,{application}-{name}.yaml,{application}-{name}.properties,{application}-{name}.json,{application}-{profile}-{name}-{label}.yml,{application}-{profile}-{name}-{label}.yaml,{application}-{profile}-{name}-{label}.properties,{application}-{profile}-{name}-{label}.json,{application}-{name}-{label}.yml,{application}-{name}-{label}.yaml,{application}-{name}-{label}.properties,{application}-{name}-{label}.json,{application}-{profile}-{name}-{label}.*,{application}-{profile}-{name}.*,{application}-{profile}.*,{application}.*'
